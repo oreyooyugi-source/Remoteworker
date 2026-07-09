@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Departments{% endblock %}
+{% block page_actions %}
+<a href="{% url 'employees:department_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Department</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+    {% for dept in departments %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="stat-icon" style="width:40px;height:40px;background:{{ dept.color }}22;color:{{ dept.color }};"><i class="fa-solid fa-sitemap"></i></span>
+                    <div>
+                        <a href="{% url 'employees:department_detail' dept.pk %}" class="fw-semibold d-block">{{ dept.name }}</a>
+                        <span class="text-secondary-2 small">{{ dept.code }}</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-secondary-2 small"><i class="fa-solid fa-users me-1"></i>{{ dept.headcount }} people</span>
+                    <span class="text-secondary-2 small">{{ dept.manager.full_name|default:"No manager" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-secondary-2"><i class="fa-solid fa-sitemap fa-2x mb-3 d-block"></i>No departments yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

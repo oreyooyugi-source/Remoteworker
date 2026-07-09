@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:20px;">
+    <div style="background:#417690;color:#fff;padding:20px;border-radius:8px;">
+        <div style="font-size:2rem;font-weight:700;">{{ total_users }}</div>
+        <div>Total Users</div>
+    </div>
+    <div style="background:#79aec8;color:#fff;padding:20px;border-radius:8px;">
+        <div style="font-size:2rem;font-weight:700;">{{ active_users }}</div>
+        <div>Active Users</div>
+    </div>
+    <div style="background:#2563eb;color:#fff;padding:20px;border-radius:8px;">
+        <div style="font-size:2rem;font-weight:700;">{{ total_employees }}</div>
+        <div>Employees</div>
+    </div>
+    <div style="background:#7c3aed;color:#fff;padding:20px;border-radius:8px;">
+        <div style="font-size:2rem;font-weight:700;">{{ total_departments }}</div>
+        <div>Departments</div>
+    </div>
+</div>
+<p style="margin-top:24px;"><a href="{% url 'core:dashboard' %}">← Back to application dashboard</a></p>
+{% endblock %}

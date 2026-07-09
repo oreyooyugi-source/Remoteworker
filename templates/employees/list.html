@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Employees{% endblock %}
+{% block page_actions %}
+<a href="{% url 'employees:org_chart' %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-sitemap me-1"></i>Org Chart</a>
+<a href="{% url 'employees:create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-plus me-1"></i>Add Employee</a>
+{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">{{ filter_form.q }}</div>
+            <div class="col-md-3">{{ filter_form.department }}</div>
+            <div class="col-md-3">{{ filter_form.status }}</div>
+            <div class="col-md-1"><button class="btn btn-primary w-100"><i class="fa-solid fa-filter"></i></button></div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3">
+    {% for e in employees %}
+    <div class="col-sm-6 col-lg-4 col-xxl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="position-relative">
+                        {% if e.avatar_url %}<img src="{{ e.avatar_url }}" class="avatar avatar-lg" alt="">{% else %}<span class="avatar avatar-lg">{{ e.initials }}</span>{% endif %}
+                        <span class="presence-dot presence-{{ e.online_status }} position-absolute bottom-0 end-0"></span>
+                    </div>
+                    <div class="min-w-0">
+                        <a href="{{ e.get_absolute_url }}" class="fw-semibold d-block text-truncate">{{ e.full_name }}</a>
+                        <span class="text-secondary-2 small d-block text-truncate">{{ e.job_title.name|default:"—" }}</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-secondary-2 small"><i class="fa-solid fa-building me-1"></i>{{ e.department.name|default:"—" }}</span>
+                    {{ e.status|status_badge }}
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center bg-transparent">
+                <span class="small text-secondary-2">{{ e.employee_code }}</span>
+                <a href="{{ e.get_absolute_url }}" class="small">View <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center py-5 text-secondary-2">
+            <i class="fa-solid fa-users fa-2x mb-3 d-block"></i>No employees found.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% include "partials/pagination.html" %}
+{% endblock %}

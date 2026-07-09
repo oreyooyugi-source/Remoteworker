@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-folder-open me-2"></i>Documents — {{ employee.full_name }}</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th><th></th></tr></thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr>
+                            <td><i class="fa-regular fa-file me-2 text-secondary-2"></i>{{ doc.title }}{% if doc.is_expired %}<span class="badge text-bg-danger ms-2">Expired</span>{% endif %}</td>
+                            <td>{{ doc.get_document_type_display }}</td>
+                            <td>{{ doc.created_at|date:"M d, Y" }}</td>
+                            <td>{% if doc.file %}<a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download"></i></a>{% endif %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-secondary-2 py-4">No documents uploaded</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if can_manage %}
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-upload me-2"></i>Upload Document</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% include "partials/form_fields.html" %}
+                    <button type="submit" class="btn btn-primary mt-3"><i class="fa-solid fa-upload me-2"></i>Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

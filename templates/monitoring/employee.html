@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Monitoring — {{ employee.full_name }}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-success"><i class="fa-solid fa-bolt"></i></div><div><div class="stat-value">{{ activity.active_hours }}h</div><div class="stat-label">Active</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-warning"><i class="fa-solid fa-hourglass"></i></div><div><div class="stat-value">{{ activity.idle_hours }}h</div><div class="stat-label">Idle</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-primary"><i class="fa-solid fa-keyboard"></i></div><div><div class="stat-value">{{ activity.keyboard_events }}</div><div class="stat-label">Keystrokes</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-info"><i class="fa-solid fa-computer-mouse"></i></div><div><div class="stat-value">{{ activity.mouse_events }}</div><div class="stat-label">Clicks</div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="fa-solid fa-window-restore me-2"></i>Top Applications</div>
+            <ul class="list-group list-group-flush">
+                {% for app in activity.top_apps %}
+                <li class="list-group-item d-flex justify-content-between"><span>{{ app.application }} {{ app.category|status_badge }}</span><span class="text-secondary-2">{{ app.hours }}h</span></li>
+                {% empty %}<li class="list-group-item text-secondary-2 small">No application data</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="fa-solid fa-globe me-2"></i>Top Websites</div>
+            <ul class="list-group list-group-flush">
+                {% for site in activity.top_sites %}
+                <li class="list-group-item d-flex justify-content-between"><span>{{ site.domain }} {{ site.category|status_badge }}</span><span class="text-secondary-2">{{ site.hours }}h</span></li>
+                {% empty %}<li class="list-group-item text-secondary-2 small">No website data</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

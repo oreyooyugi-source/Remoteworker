@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Payslip {{ payslip.reference }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h4 class="mb-0">Payslip</h4>
+                <span class="text-secondary-2">{{ payslip.reference }} · {{ payslip.period.name }}</span>
+            </div>
+            <div class="text-end">
+                {{ payslip.status|status_badge }}
+                <div class="text-secondary-2 small mt-1">{{ company.company_name }}</div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6"><small class="text-secondary-2 d-block">Employee</small><strong>{{ payslip.employee.full_name }}</strong><div class="small">{{ payslip.employee.employee_code }}</div></div>
+            <div class="col-md-6 text-md-end"><small class="text-secondary-2 d-block">Pay Period</small>{{ payslip.period.start_date|date:"M d" }} – {{ payslip.period.end_date|date:"M d, Y" }}</div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card h-100"><div class="card-header bg-soft-success"><i class="fa-solid fa-plus me-2"></i>Earnings</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between"><span>Base Salary</span><span>{{ payslip.base_salary }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Overtime ({{ payslip.overtime_hours }}h)</span><span>{{ payslip.overtime_pay }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Bonuses</span><span>{{ payslip.bonus_total }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Allowances</span><span>{{ payslip.allowance_total }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between fw-bold"><span>Gross Pay</span><span>{{ payslip.gross_pay }}</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100"><div class="card-header bg-soft-danger"><i class="fa-solid fa-minus me-2"></i>Deductions</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between"><span>Tax</span><span>{{ payslip.tax_total }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Other Deductions</span><span>{{ payslip.deduction_total }}</span></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Leave Deduction</span><span>{{ payslip.leave_deduction }}</span></li>
+                        {% for c in components %}{% if c.component_type == 'deduction' %}<li class="list-group-item d-flex justify-content-between small"><span>{{ c.name }}</span><span>{{ c.amount }}</span></li>{% endif %}{% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-4 p-3 rounded bg-soft-primary">
+            <strong class="fs-5">Net Pay</strong>
+            <strong class="fs-4">{{ payslip.currency }} {{ payslip.net_pay }}</strong>
+        </div>
+    </div>
+</div>
+</div></div>
+{% endblock %}

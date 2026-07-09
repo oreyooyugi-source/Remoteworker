@@ -1,0 +1,9 @@
+{% load core_tags %}
+<div class="card stat-card h-100">
+    <div class="stat-icon bg-soft-{{ card.color }}"><i class="fa-solid {{ card.icon }}"></i></div>
+    <div>
+        <div class="stat-value">{{ card.value }}</div>
+        <div class="stat-label">{{ card.label }}</div>
+        {% if card.subtitle %}<div class="text-secondary-2 small">{{ card.subtitle }}</div>{% endif %}
+    </div>
+</div>

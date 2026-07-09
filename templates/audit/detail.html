@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Audit Entry{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-shield-halved me-2"></i>Audit Entry #{{ log.pk }}</div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Timestamp</dt><dd class="col-sm-9">{{ log.created_at }}</dd>
+            <dt class="col-sm-3">Actor</dt><dd class="col-sm-9">{{ log.actor_repr }}</dd>
+            <dt class="col-sm-3">Action</dt><dd class="col-sm-9"><span class="badge text-bg-{{ log.action_color }}">{{ log.get_action_display }}</span></dd>
+            <dt class="col-sm-3">Module</dt><dd class="col-sm-9">{{ log.module|default:"—" }}</dd>
+            <dt class="col-sm-3">Target</dt><dd class="col-sm-9">{{ log.target_repr|default:"—" }} <span class="text-secondary-2 small">({{ log.target_type }})</span></dd>
+            <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ log.description|default:"—" }}</dd>
+            <dt class="col-sm-3">IP Address</dt><dd class="col-sm-9">{{ log.ip_address|default:"—" }}</dd>
+            <dt class="col-sm-3">Path</dt><dd class="col-sm-9"><code>{{ log.method }} {{ log.path }}</code></dd>
+        </dl>
+        {% if log.changes %}
+        <hr>
+        <h6>Changes</h6>
+        <pre class="bg-soft-secondary p-3 rounded small">{{ log.changes }}</pre>
+        {% endif %}
+    </div>
+</div>
+</div></div>
+{% endblock %}

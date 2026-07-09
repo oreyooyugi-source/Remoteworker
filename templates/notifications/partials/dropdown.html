@@ -1,0 +1,14 @@
+{% load core_tags %}
+<div style="max-height: 360px; overflow-y: auto;">
+    {% for note in recent_notifications %}
+    <a href="{{ note.get_absolute_url }}" class="dropdown-item d-flex gap-2 py-2 px-3 border-bottom {% if not note.is_read %}bg-soft-primary{% endif %}">
+        <span class="text-{{ note.color }}"><i class="fa-solid {{ note.icon }}"></i></span>
+        <span class="flex-grow-1">
+            <span class="d-block fw-semibold small text-truncate">{{ note.title }}</span>
+            <span class="d-block text-secondary-2 small">{{ note.created_at|timesince }} ago</span>
+        </span>
+    </a>
+    {% empty %}
+    <div class="text-center text-secondary-2 py-4 small">No notifications</div>
+    {% endfor %}
+</div>

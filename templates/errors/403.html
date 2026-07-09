@@ -1,0 +1,10 @@
+{% extends "base_auth.html" %}
+{% block title %}Access Denied{% endblock %}
+{% block content %}
+<div class="text-center">
+    <div class="display-1 fw-bold text-danger">403</div>
+    <h3 class="fw-bold mb-2">Access denied</h3>
+    <p class="text-secondary-2 mb-4">You don't have permission to view this resource.</p>
+    <a href="{% url 'core:dashboard' %}" class="btn btn-gradient"><i class="fa-solid fa-house me-2"></i>Back to Dashboard</a>
+</div>
+{% endblock %}

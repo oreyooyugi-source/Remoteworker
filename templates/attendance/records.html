@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Attendance Records{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4"><label class="form-label small">Month</label><input type="month" name="month" value="{{ request.GET.month }}" class="form-control"></div>
+        <div class="col-md-4"><label class="form-label small">Status</label>
+            <select name="status" class="form-select">
+                <option value="">All</option>
+                {% for value, label in statuses %}<option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+    </form>
+</div></div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr>{% if is_manager %}<th>Employee</th>{% endif %}<th>Date</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th><th>Late</th></tr></thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    {% if is_manager %}<td><a href="{{ r.employee.get_absolute_url }}">{{ r.employee.full_name }}</a></td>{% endif %}
+                    <td>{{ r.date|date:"M d, Y" }}</td>
+                    <td>{{ r.status|status_badge }}</td>
+                    <td>{{ r.clock_in|date:"H:i"|default:"—" }}</td>
+                    <td>{{ r.clock_out|date:"H:i"|default:"—" }}</td>
+                    <td>{{ r.worked_hours }}h</td>
+                    <td>{% if r.is_late %}<span class="text-danger">{{ r.late_minutes }}m</span>{% else %}—{% endif %}</td>
+                </tr>
+                {% empty %}<tr><td colspan="7" class="text-center text-secondary-2 py-4">No records found.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

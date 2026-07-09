@@ -1,0 +1,77 @@
+{% load static %}
+<header class="topbar">
+    <button class="icon-btn d-md-none" id="sidebar-mobile-toggle" type="button" aria-label="Toggle menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <button class="icon-btn d-none d-md-grid" id="sidebar-collapse" data-url="{% url 'core:set_sidebar' %}" type="button" aria-label="Collapse sidebar">
+        <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+
+    <form class="search-box d-none d-sm-block" action="{% url 'core:search' %}" method="get" role="search">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="search" name="q" placeholder="Search employees, projects, tasks…" aria-label="Search">
+    </form>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+        <span class="d-none d-lg-inline text-secondary-2 small me-2">
+            <i class="fa-regular fa-clock me-1"></i><span id="live-clock"></span>
+        </span>
+
+        <button class="icon-btn" id="theme-toggle" data-url="{% url 'core:set_theme' %}" type="button" aria-label="Toggle theme">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- Notifications -->
+        <div class="dropdown">
+            <button class="icon-btn" id="notif-btn" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fa-regular fa-bell"></i>
+                {% if unread_notifications %}<span class="notif-dot">{{ unread_notifications }}</span>{% endif %}
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow-lg p-0" style="width: 340px;" id="notif-dropdown"
+                 data-url="{% url 'notifications:dropdown' %}" data-mark-all-url="{% url 'notifications:mark_all_read' %}">
+                <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                    <strong>Notifications</strong>
+                    <a href="#" id="mark-all-read" class="small">Mark all read</a>
+                </div>
+                <div style="max-height: 360px; overflow-y: auto;">
+                    {% for note in recent_notifications %}
+                    <a href="{{ note.get_absolute_url }}" class="dropdown-item d-flex gap-2 py-2 px-3 border-bottom {% if not note.is_read %}bg-soft-primary{% endif %}">
+                        <span class="text-{{ note.color }}"><i class="fa-solid {{ note.icon }}"></i></span>
+                        <span class="flex-grow-1">
+                            <span class="d-block fw-semibold small text-truncate">{{ note.title }}</span>
+                            <span class="d-block text-secondary-2 small">{{ note.created_at|timesince }} ago</span>
+                        </span>
+                    </a>
+                    {% empty %}
+                    <div class="text-center text-secondary-2 py-4 small">No notifications</div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'notifications:list' %}" class="dropdown-item text-center py-2 small">View all</a>
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="dropdown">
+            <button class="d-flex align-items-center gap-2 border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="avatar avatar-sm" alt="{{ user.get_full_name }}">
+                {% else %}
+                <span class="avatar avatar-sm">{{ user.initials }}</span>
+                {% endif %}
+                <span class="d-none d-lg-block text-start">
+                    <span class="d-block small fw-semibold" style="line-height:1;">{{ user.get_full_name }}</span>
+                    <span class="d-block text-secondary-2" style="font-size:.72rem;">{{ user.display_role }}</span>
+                </span>
+                <i class="fa-solid fa-chevron-down small text-secondary-2"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow-lg">
+                <a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="fa-regular fa-user me-2"></i>My Profile</a>
+                <a class="dropdown-item" href="{% url 'accounts:security' %}"><i class="fa-solid fa-shield-halved me-2"></i>Security</a>
+                <a class="dropdown-item" href="{% url 'notifications:preferences' %}"><i class="fa-solid fa-sliders me-2"></i>Preferences</a>
+                {% if user.is_staff %}<a class="dropdown-item" href="/admin/"><i class="fa-solid fa-toolbox me-2"></i>Admin Panel</a>{% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Sign Out</a>
+            </div>
+        </div>
+    </div>
+</header>

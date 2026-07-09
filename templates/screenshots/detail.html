@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Screenshot{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if screenshot.image %}<img src="{{ screenshot.image.url }}" class="img-fluid rounded" alt="Screenshot">{% else %}<div class="py-5 text-secondary-2"><i class="fa-solid fa-image fa-3x"></i></div>{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-circle-info me-2"></i>Details</div>
+            <div class="card-body small">
+                <p class="mb-2"><strong>Employee:</strong> {{ screenshot.employee.full_name }}</p>
+                <p class="mb-2"><strong>Captured:</strong> {{ screenshot.captured_at|date:"M d, Y H:i:s" }}</p>
+                <p class="mb-2"><strong>Type:</strong> {{ screenshot.get_capture_type_display }}</p>
+                <p class="mb-2"><strong>Application:</strong> {{ screenshot.active_application|default:"—" }}</p>
+                <p class="mb-0"><strong>Activity:</strong> {{ screenshot.activity_level }}%</p>
+            </div>
+        </div>
+        <div class="d-grid gap-2">
+            {% if screenshot.image %}<a href="{{ screenshot.image.url }}" download class="btn btn-outline-primary"><i class="fa-solid fa-download me-2"></i>Download</a>{% endif %}
+            <form method="post" action="{% url 'screenshots:flag' screenshot.pk %}">{% csrf_token %}<button class="btn btn-outline-warning w-100"><i class="fa-solid fa-flag me-2"></i>Flag</button></form>
+            <form method="post" action="{% url 'screenshots:delete' screenshot.pk %}">{% csrf_token %}<button class="btn btn-outline-danger w-100" data-confirm="Delete this screenshot?"><i class="fa-solid fa-trash me-2"></i>Delete</button></form>
+        </div>
+    </div>
+</div>
+{% endblock %}

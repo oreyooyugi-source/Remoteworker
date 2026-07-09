@@ -1,0 +1,17 @@
+{% load core_tags %}
+<li>
+    <div class="d-inline-flex align-items-center gap-2 border rounded p-2 mb-2" style="border-color: var(--border-color)!important; background: var(--bg-surface);">
+        {% if node.employee.avatar_url %}<img src="{{ node.employee.avatar_url }}" class="avatar avatar-sm" alt="">{% else %}<span class="avatar avatar-sm">{{ node.employee.initials }}</span>{% endif %}
+        <span>
+            <a href="{{ node.employee.get_absolute_url }}" class="fw-semibold d-block small">{{ node.employee.full_name }}</a>
+            <span class="text-secondary-2" style="font-size:.72rem;">{{ node.employee.job_title.name|default:"—" }}</span>
+        </span>
+    </div>
+    {% if node.children %}
+    <ul class="list-unstyled ps-4 ms-2 border-start" style="border-color: var(--border-color)!important;">
+        {% for child in node.children %}
+            {% include "employees/partials/org_node.html" with node=child %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

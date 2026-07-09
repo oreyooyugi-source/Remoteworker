@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Productivity — {{ employee.full_name }}{% endblock %}
+{% block content %}
+<div class="card mb-3">
+    <div class="card-header"><i class="fa-solid fa-chart-line me-2"></i>30-Day Trend</div>
+    <div class="card-body"><div style="height:280px;"><canvas id="productivityTrendChart"></canvas></div></div>
+</div>
+{{ trend_json|json_script:"productivity-trend" }}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Date</th><th>Productivity</th><th>Activity</th><th>Focus</th><th>Tasks</th></tr></thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td>{{ r.date|date:"M d" }}</td>
+                    <td><span class="badge text-bg-{{ r.rating_color }}">{{ r.productivity_score|floatformat:0 }}%</span></td>
+                    <td>{{ r.activity_score|floatformat:0 }}%</td>
+                    <td>{{ r.focus_score|floatformat:0 }}%</td>
+                    <td>{{ r.tasks_completed }}</td>
+                </tr>
+                {% empty %}<tr><td colspan="5" class="text-center text-secondary-2 py-3">No records</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

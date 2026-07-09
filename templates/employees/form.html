@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-user-pen me-2"></i>{{ page_title }}</div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% if is_create %}
+            <div class="row g-3 mb-2">
+                <div class="col-md-4"><label class="form-label">First name <span class="text-danger">*</span></label><input type="text" name="first_name" class="form-control" required></div>
+                <div class="col-md-4"><label class="form-label">Last name</label><input type="text" name="last_name" class="form-control"></div>
+                <div class="col-md-4"><label class="form-label">Work email <span class="text-danger">*</span></label><input type="email" name="email" class="form-control" required></div>
+            </div>
+            <hr>
+            {% endif %}
+            {% include "partials/form_fields.html" %}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-2"></i>Save</button>
+                <a href="{% url 'employees:list' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

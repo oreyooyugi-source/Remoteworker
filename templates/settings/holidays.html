@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Holiday Calendar{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7">
+        {% for cal in calendars %}
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between"><span><i class="fa-solid fa-calendar-day me-2"></i>{{ cal.name }} {{ cal.year }}</span>{% if cal.is_active %}<span class="badge text-bg-success">Active</span>{% endif %}</div>
+            <ul class="list-group list-group-flush">
+                {% for h in cal.holidays.all %}<li class="list-group-item d-flex justify-content-between"><span>{{ h.name }}</span><span class="text-secondary-2">{{ h.date|date:"M d, Y" }}</span></li>{% empty %}<li class="list-group-item text-secondary-2 small">No holidays added</li>{% endfor %}
+            </ul>
+        </div>
+        {% empty %}
+        <div class="card"><div class="card-body text-center text-secondary-2 py-4">No holiday calendars yet.</div></div>
+        {% endfor %}
+    </div>
+    <div class="col-lg-5">
+        <div class="card"><div class="card-header"><i class="fa-solid fa-plus me-2"></i>New Calendar</div><div class="card-body">
+            <form method="post">{% csrf_token %}{% include "partials/form_fields.html" %}<button class="btn btn-primary mt-3"><i class="fa-solid fa-check me-2"></i>Create</button></form>
+        </div></div>
+    </div>
+</div>
+{% endblock %}

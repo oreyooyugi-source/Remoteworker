@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Set Up 2FA{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-shield-halved me-2"></i>Enable Two-Factor Authentication</div>
+            <div class="card-body text-center">
+                <p class="text-secondary-2">Scan this QR code with Google Authenticator, Authy or a similar app.</p>
+                {% if qr_data_uri %}
+                <img src="{{ qr_data_uri }}" alt="2FA QR code" class="my-3" style="max-width:220px;">
+                {% endif %}
+                <p class="small">Or enter this key manually:</p>
+                <code class="d-block mb-4 p-2 bg-soft-primary rounded">{{ secret }}</code>
+                <form method="post" class="d-flex flex-column align-items-center gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="enable">
+                    <input type="text" name="code" class="form-control text-center" style="max-width:200px;" placeholder="000000" maxlength="6" required>
+                    <button type="submit" class="btn btn-gradient"><i class="fa-solid fa-check me-2"></i>Verify & Enable</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

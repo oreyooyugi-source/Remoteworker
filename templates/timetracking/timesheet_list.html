@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Timesheets{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr>{% if is_manager %}<th>Employee</th>{% endif %}<th>Period</th><th>Total</th><th>Billable</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                {% for t in timesheets %}
+                <tr>
+                    {% if is_manager %}<td>{{ t.employee.full_name }}</td>{% endif %}
+                    <td>{{ t.start_date|date:"M d" }} – {{ t.end_date|date:"M d" }}</td>
+                    <td>{{ t.total_hours }}h</td>
+                    <td>{{ t.billable_hours }}h</td>
+                    <td>{{ t.status|status_badge }}</td>
+                    <td><a href="{% url 'timetracking:timesheet_detail' t.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                </tr>
+                {% empty %}<tr><td colspan="6" class="text-center text-secondary-2 py-4">No timesheets yet.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

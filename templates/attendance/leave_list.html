@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Leave Requests{% endblock %}
+{% block page_actions %}
+<a href="{% url 'attendance:leave_request' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>Request Leave</a>
+{% endblock %}
+{% block content %}
+{% if is_manager and pending_count %}
+<div class="alert alert-warning"><i class="fa-solid fa-inbox me-2"></i>{{ pending_count }} leave request{{ pending_count|pluralize }} pending your approval.</div>
+{% endif %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr>{% if is_manager %}<th>Employee</th>{% endif %}<th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th>{% if is_manager %}<th>Action</th>{% endif %}</tr></thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    {% if is_manager %}<td>{{ leave.employee.full_name }}</td>{% endif %}
+                    <td>{{ leave.leave_type.name|default:"—" }}</td>
+                    <td>{{ leave.start_date|date:"M d" }}</td>
+                    <td>{{ leave.end_date|date:"M d" }}</td>
+                    <td>{{ leave.days }}</td>
+                    <td>{{ leave.status|status_badge }}</td>
+                    {% if is_manager %}
+                    <td>
+                        {% if leave.status == 'pending' %}
+                        <form method="post" action="{% url 'attendance:leave_decision' leave.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button name="decision" value="approve" class="btn btn-sm btn-success"><i class="fa-solid fa-check"></i></button>
+                            <button name="decision" value="reject" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-xmark"></i></button>
+                        </form>
+                        {% else %}<span class="text-secondary-2 small">{{ leave.approver.get_full_name|default:"" }}</span>{% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}<tr><td colspan="7" class="text-center text-secondary-2 py-4">No leave requests.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Time Entries{% endblock %}
+{% block page_actions %}
+<a href="{% url 'timetracking:manual_entry' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>Add Entry</a>
+{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Description</th><th>Project</th><th>Start</th><th>End</th><th>Duration</th><th></th></tr></thead>
+            <tbody>
+                {% for e in entries %}
+                <tr>
+                    <td>{{ e.description|default:"—" }}</td>
+                    <td>{{ e.project.name|default:"—" }}</td>
+                    <td>{{ e.start_time|date:"M d, H:i" }}</td>
+                    <td>{{ e.end_time|date:"H:i"|default:"running" }}</td>
+                    <td>{{ e.duration_hours }}h</td>
+                    <td>
+                        <form method="post" action="{% url 'timetracking:delete_entry' e.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-outline-danger" data-confirm="Delete this entry?"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}<tr><td colspan="6" class="text-center text-secondary-2 py-4">No entries.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

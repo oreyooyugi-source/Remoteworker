@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Team Attendance{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-4"><div class="card stat-card"><div class="stat-icon bg-soft-success"><i class="fa-solid fa-user-check"></i></div><div><div class="stat-value">{{ present }}</div><div class="stat-label">Present</div></div></div></div>
+    <div class="col-4"><div class="card stat-card"><div class="stat-icon bg-soft-warning"><i class="fa-solid fa-clock"></i></div><div><div class="stat-value">{{ late }}</div><div class="stat-label">Late</div></div></div></div>
+    <div class="col-4"><div class="card stat-card"><div class="stat-icon bg-soft-danger"><i class="fa-solid fa-user-xmark"></i></div><div><div class="stat-value">{{ absent }}</div><div class="stat-label">Absent</div></div></div></div>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Employee</th><th>Department</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th></tr></thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td><a href="{{ r.employee.get_absolute_url }}">{{ r.employee.full_name }}</a></td>
+                    <td>{{ r.employee.department.name|default:"—" }}</td>
+                    <td>{{ r.status|status_badge }}</td>
+                    <td>{{ r.clock_in|date:"H:i"|default:"—" }}</td>
+                    <td>{{ r.clock_out|date:"H:i"|default:"—" }}</td>
+                    <td>{{ r.worked_hours }}h</td>
+                </tr>
+                {% empty %}<tr><td colspan="6" class="text-center text-secondary-2 py-4">No attendance records for today.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

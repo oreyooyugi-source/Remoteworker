@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Working Hours Policy{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-clock me-2"></i>Working Hours Policy</div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% include "partials/form_fields.html" %}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check me-2"></i>Save</button>
+                <a href="{% url 'settings_app:working_hours' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

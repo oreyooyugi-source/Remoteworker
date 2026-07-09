@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Teams{% endblock %}
+{% block page_actions %}
+<a href="{% url 'employees:team_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Team</a>
+{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Team</th><th>Department</th><th>Lead</th><th>Members</th></tr></thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td class="fw-semibold">{{ team.name }}</td>
+                    <td>{{ team.department.name }}</td>
+                    <td>{{ team.lead.full_name|default:"—" }}</td>
+                    <td>{{ team.members_total }}</td>
+                </tr>
+                {% empty %}<tr><td colspan="4" class="text-center text-secondary-2 py-4">No teams yet.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

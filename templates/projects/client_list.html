@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Clients{% endblock %}
+{% block page_actions %}
+<a href="{% url 'projects:client_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Client</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+    {% for c in clients %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100"><div class="card-body">
+            <h5 class="mb-1">{{ c.name }}</h5>
+            <p class="text-secondary-2 small mb-2">{{ c.contact_name }} · {{ c.email }}</p>
+            <span class="badge text-bg-primary">{{ c.num_projects }} project{{ c.num_projects|pluralize }}</span>
+            {% if c.is_active %}<span class="badge text-bg-success">Active</span>{% endif %}
+        </div></div>
+    </div>
+    {% empty %}<div class="col-12 text-center py-5 text-secondary-2"><i class="fa-solid fa-building fa-2x mb-3 d-block"></i>No clients yet.</div>{% endfor %}
+</div>
+{% endblock %}

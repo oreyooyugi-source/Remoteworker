@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Security{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-shield-halved me-2"></i>Two-Factor Authentication</div>
+            <div class="card-body">
+                {% if two_factor_enabled %}
+                <p class="text-success"><i class="fa-solid fa-circle-check me-2"></i>2FA is enabled on your account.</p>
+                <a href="{% url 'accounts:two_factor_setup' %}" class="btn btn-outline-danger btn-sm">Manage / Disable</a>
+                {% else %}
+                <p class="text-secondary-2">Add an extra layer of security to your account.</p>
+                <a href="{% url 'accounts:two_factor_setup' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>Enable 2FA</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-key me-2"></i>Password</div>
+            <div class="card-body">
+                <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary btn-sm">Change password</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-desktop me-2"></i>Active Sessions</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Device</th><th>IP</th><th>Last seen</th><th></th></tr></thead>
+                    <tbody>
+                        {% for s in sessions %}
+                        <tr>
+                            <td>{{ s.browser }} · {{ s.operating_system }}</td>
+                            <td>{{ s.ip_address|default:"—" }}</td>
+                            <td>{{ s.last_seen|date:"M d, H:i" }}</td>
+                            <td>
+                                {% if s.is_active %}
+                                <form method="post" action="{% url 'accounts:revoke_session' s.pk %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-outline-danger" data-confirm="Revoke this session?">Revoke</button>
+                                </form>
+                                {% else %}<span class="badge text-bg-secondary">Ended</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-secondary-2">No sessions</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

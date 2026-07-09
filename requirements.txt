@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------------------
+# Remote Worker Tracker System — Python dependencies
+# ---------------------------------------------------------------------------
+# Core framework
+Django>=5.0,<6.0
+
+# Configuration / environment
+django-environ>=0.11.2
+
+# Image processing (profile photos, screenshots, thumbnails)
+Pillow>=10.3.0
+
+# Static files serving in production
+whitenoise>=6.6.0
+
+# WSGI / ASGI production servers
+gunicorn>=22.0.0
+
+# Form rendering helpers
+django-widget-tweaks>=1.5.0
+
+# Report generation
+reportlab>=4.2.0        # PDF generation
+openpyxl>=3.1.2         # Excel (xlsx) export
+
+# Two-factor authentication (2FA ready)
+pyotp>=2.9.0
+qrcode>=7.4.2
+
+# Date / time utilities
+python-dateutil>=2.9.0
+
+# Humanize helpers (already ships with Django, but pinned for clarity)
+# django.contrib.humanize is used from Django itself.
+
+# Development / testing
+coverage>=7.5.0

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Task Board{% endblock %}
+{% block page_actions %}
+<a href="{% url 'tasks:list' %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i>List View</a>
+<a href="{% url 'tasks:create' %}{% if project %}?project={{ project.pk }}{% endif %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Task</a>
+{% endblock %}
+{% block content %}
+<div class="kanban-board" id="kanban-board" data-move-url="{% url 'tasks:move' %}">
+    {% for column in columns %}
+    <div class="kanban-column">
+        <div class="kanban-column-header">
+            <span>{{ column.label }}</span>
+            <span class="badge text-bg-secondary column-count">{{ column.count }}</span>
+        </div>
+        <div class="kanban-cards" data-status="{{ column.status }}">
+            {% for task in column.tasks %}
+            <div class="kanban-card position-relative" data-task-id="{{ task.pk }}">
+                <span class="priority-bar bg-{{ task.priority|status_color }}"></span>
+                <div class="ps-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <a href="{{ task.get_absolute_url }}" class="fw-semibold small text-decoration-none">{{ task.title }}</a>
+                    </div>
+                    {% if task.project %}<div class="text-secondary-2" style="font-size:.7rem;">{{ task.project.name }}</div>{% endif %}
+                    <div class="d-flex flex-wrap gap-1 mt-2">
+                        {% for label in task.labels.all %}<span class="badge" style="background:{{ label.color }};font-size:.62rem;">{{ label.name }}</span>{% endfor %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="badge text-bg-{{ task.priority|status_color }}" style="font-size:.62rem;">{{ task.get_priority_display }}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            {% if task.is_overdue %}<i class="fa-solid fa-clock text-danger" title="Overdue"></i>{% endif %}
+                            {% for a in task.assignees.all|slice:":3" %}<span class="avatar avatar-sm" style="width:24px;height:24px;font-size:.6rem;">{{ a.initials }}</span>{% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

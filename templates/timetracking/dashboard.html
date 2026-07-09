@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Time Tracking{% endblock %}
+{% block content %}
+{% if not has_profile %}
+<div class="alert alert-info">You need an employee profile to track time.</div>
+{% else %}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card" id="timer-widget" data-url="{% url 'timetracking:timer_control' %}"
+             {% if running_entry %}data-start="{{ running_entry.start_time.isoformat }}"{% endif %}>
+            <div class="card-body text-center py-4">
+                <div class="display-4 fw-bold mb-3" id="timer-display">00:00:00</div>
+                {% if running_entry %}
+                <p class="text-secondary-2">{{ running_entry.description|default:"Working…" }}</p>
+                <button class="btn btn-danger px-4" id="timer-stop"><i class="fa-solid fa-stop me-2"></i>Stop Timer</button>
+                {% else %}
+                <input type="text" id="timer-description" class="form-control mb-3" placeholder="What are you working on?">
+                <button class="btn btn-success px-4" id="timer-start"><i class="fa-solid fa-play me-2"></i>Start Timer</button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mt-3 d-grid">
+            <a href="{% url 'timetracking:manual_entry' %}" class="btn btn-outline-primary"><i class="fa-solid fa-plus me-2"></i>Add Manual Entry</a>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="row g-3 mb-3">
+            <div class="col-6"><div class="card stat-card"><div class="stat-icon bg-soft-primary"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="stat-value">{{ summary.total_hours|default:0 }}h</div><div class="stat-label">This week</div></div></div></div>
+            <div class="col-6"><div class="card stat-card"><div class="stat-icon bg-soft-success"><i class="fa-solid fa-dollar-sign"></i></div><div><div class="stat-value">{{ summary.billable_hours|default:0 }}h</div><div class="stat-label">Billable</div></div></div></div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-chart-column me-2"></i>Weekly Hours</div>
+            <div class="card-body"><div style="height:200px;"><canvas id="weeklyHoursChart"></canvas></div></div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between"><span><i class="fa-solid fa-list me-2"></i>Recent Entries</span><a href="{% url 'timetracking:entries' %}" class="small">All entries</a></div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Description</th><th>Project</th><th>Start</th><th>Duration</th><th>Billable</th></tr></thead>
+                    <tbody>
+                        {% for e in recent_entries %}
+                        <tr>
+                            <td>{{ e.description|default:"—" }}</td>
+                            <td>{{ e.project.name|default:"—" }}</td>
+                            <td>{{ e.start_time|date:"M d, H:i" }}</td>
+                            <td>{{ e.duration_hours }}h</td>
+                            <td>{% if e.is_billable %}<i class="fa-solid fa-check text-success"></i>{% else %}<i class="fa-solid fa-minus text-secondary-2"></i>{% endif %}</td>
+                        </tr>
+                        {% empty %}<tr><td colspan="5" class="text-center text-secondary-2 py-3">No time entries yet.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{{ summary.by_day|json_script:"weekly-hours" }}
+{% endif %}
+{% endblock %}

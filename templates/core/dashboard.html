@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    {% for card in stat_cards %}
+    <div class="col-6 col-xl-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon bg-soft-{{ card.color }}"><i class="fa-solid {{ card.icon }}"></i></div>
+            <div>
+                <div class="stat-value">{{ card.value }}</div>
+                <div class="stat-label">{{ card.label }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="fa-solid fa-chart-line me-2 text-primary"></i>Attendance — last 7 days</span>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;"><canvas id="attendanceTrendChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="fa-solid fa-bolt me-2 text-warning"></i>Quick Actions</div>
+            <div class="card-body d-grid gap-2">
+                <a href="{% url 'attendance:dashboard' %}" class="btn btn-outline-primary text-start"><i class="fa-solid fa-clock me-2"></i>Clock In / Out</a>
+                <a href="{% url 'timetracking:dashboard' %}" class="btn btn-outline-primary text-start"><i class="fa-solid fa-stopwatch me-2"></i>Start Timer</a>
+                <a href="{% url 'tasks:board' %}" class="btn btn-outline-primary text-start"><i class="fa-solid fa-list-check me-2"></i>My Tasks</a>
+                <a href="{% url 'attendance:leave_request' %}" class="btn btn-outline-primary text-start"><i class="fa-solid fa-plane-departure me-2"></i>Request Leave</a>
+                <a href="{% url 'reports:list' %}" class="btn btn-outline-primary text-start"><i class="fa-solid fa-file-export me-2"></i>Generate Report</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ charts_json|json_script:"dashboard-charts" }}
+{% endblock %}

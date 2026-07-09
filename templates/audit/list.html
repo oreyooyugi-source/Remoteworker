@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Audit Log{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3"><input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search…"></div>
+        <div class="col-md-3">
+            <select name="action" class="form-select"><option value="">All actions</option>
+                {% for value, label in actions %}<option value="{{ value }}" {% if selected_action == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="module" class="form-select"><option value="">All modules</option>
+                {% for m in modules %}<option value="{{ m }}" {% if selected_module == m %}selected{% endif %}>{{ m|title }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+    </form>
+</div></div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Module</th><th>Target</th><th>IP</th></tr></thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td class="small">{{ log.created_at|date:"M d, H:i:s" }}</td>
+                    <td>{{ log.actor_repr }}</td>
+                    <td><span class="badge text-bg-{{ log.action_color }}">{{ log.get_action_display }}</span></td>
+                    <td class="small">{{ log.module }}</td>
+                    <td class="small"><a href="{% url 'audit:detail' log.pk %}">{{ log.target_repr|truncatechars:40 }}</a></td>
+                    <td class="small text-secondary-2">{{ log.ip_address|default:"—" }}</td>
+                </tr>
+                {% empty %}<tr><td colspan="6" class="text-center text-secondary-2 py-4">No audit entries.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

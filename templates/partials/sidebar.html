@@ -1,0 +1,19 @@
+{% load core_tags %}
+<aside class="sidebar">
+    <a href="{% url 'core:dashboard' %}" class="sidebar-brand">
+        <span class="brand-logo"><i class="fa-solid fa-satellite-dish"></i></span>
+        <span class="brand-text">{{ APP_SHORT_NAME }}</span>
+    </a>
+    <nav class="sidebar-nav">
+        {% for section in nav_sections %}
+        <div class="nav-section-heading">{{ section.heading }}</div>
+        {% for item in section.items %}
+        <a href="{% url item.url_name %}" class="sidebar-link {% active_link item.url_name %}">
+            <span class="link-icon"><i class="fa-solid {{ item.icon }}"></i></span>
+            <span class="link-label">{{ item.label }}</span>
+            {% if item.badge %}<span class="badge text-bg-danger link-badge">{{ item.badge }}</span>{% endif %}
+        </a>
+        {% endfor %}
+        {% endfor %}
+    </nav>
+</aside>

@@ -1,0 +1,44 @@
+# ---------------------------------------------------------------------------
+# Remote Worker Tracker System — Docker Compose (production-like stack)
+# ---------------------------------------------------------------------------
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: rwt-web:latest
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    volumes:
+      - rwt_db:/app/data
+      - rwt_media:/app/media
+      - rwt_static:/app/staticfiles
+      - rwt_logs:/app/logs
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - rwt_static:/app/staticfiles:ro
+      - rwt_media:/app/media:ro
+
+volumes:
+  rwt_db:
+  rwt_media:
+  rwt_static:
+  rwt_logs:

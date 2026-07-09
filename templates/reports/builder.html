@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Report Builder{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-screwdriver-wrench me-2"></i>Report Builder</div>
+    <div class="card-body">
+        <form method="post" action="{% url 'reports:generate' %}" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-4">
+                <label class="form-label">Report type</label>
+                <select name="report_type" class="form-select">{% for value, label in report_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Format</label>
+                <select name="export_format" class="form-select">{% for value, label in formats %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+            </div>
+            <div class="col-md-2"><label class="form-label">From</label><input type="date" name="start" class="form-control"></div>
+            <div class="col-md-2"><label class="form-label">To</label><input type="date" name="end" class="form-control"></div>
+            <div class="col-12"><button class="btn btn-primary"><i class="fa-solid fa-download me-2"></i>Generate</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

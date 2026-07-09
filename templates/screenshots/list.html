@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Screenshots{% endblock %}
+{% block page_actions %}
+<a href="{% url 'screenshots:timeline' %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-timeline me-1"></i>Timeline</a>
+{% endblock %}
+{% block content %}
+{% if is_manager %}
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small">Employee</label>
+            <select name="employee" class="form-select">
+                <option value="">All</option>
+                {% for e in employees %}<option value="{{ e.pk }}" {% if request.GET.employee == e.pk|stringformat:'s' %}selected{% endif %}>{{ e.full_name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Flagged</label>
+            <select name="flagged" class="form-select"><option value="">All</option><option value="1" {% if request.GET.flagged == '1' %}selected{% endif %}>Flagged only</option></select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+    </form>
+</div></div>
+{% endif %}
+<div class="screenshot-grid">
+    {% for shot in screenshots %}
+    <a href="{% url 'screenshots:detail' shot.pk %}" class="screenshot-thumb d-block text-decoration-none">
+        {% if shot.thumbnail_url %}<img src="{{ shot.thumbnail_url }}" alt="Screenshot">{% else %}<div class="d-flex align-items-center justify-content-center bg-soft-secondary" style="height:140px;"><i class="fa-solid fa-image fa-2x text-secondary-2"></i></div>{% endif %}
+        <div class="p-2">
+            <div class="small fw-semibold text-truncate">{{ shot.employee.full_name }}</div>
+            <div class="text-secondary-2" style="font-size:.72rem;">{{ shot.captured_at|date:"M d, H:i" }}{% if shot.is_flagged %} · <span class="text-danger">Flagged</span>{% endif %}</div>
+        </div>
+    </a>
+    {% empty %}
+    <div class="text-center py-5 text-secondary-2" style="grid-column:1/-1;"><i class="fa-solid fa-camera fa-2x mb-3 d-block"></i>No screenshots captured yet.</div>
+    {% endfor %}
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

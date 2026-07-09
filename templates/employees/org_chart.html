@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Organisation Chart{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% if tree %}
+        <ul class="list-unstyled">
+            {% for node in tree %}
+                {% include "employees/partials/org_node.html" with node=node %}
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-center text-secondary-2 py-4">No reporting structure defined yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

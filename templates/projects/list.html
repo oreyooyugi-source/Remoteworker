@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Projects{% endblock %}
+{% block page_actions %}
+<a href="{% url 'projects:client_list' %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-building me-1"></i>Clients</a>
+{% if can_manage %}<a href="{% url 'projects:create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>New Project</a>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-6"><input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search projects…"></div>
+        <div class="col-md-4">
+            <select name="status" class="form-select"><option value="">All statuses</option>
+                {% for value, label in statuses %}<option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+    </form>
+</div></div>
+<div class="row g-3">
+    {% for p in projects %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="stat-icon" style="width:38px;height:38px;background:{{ p.color }}22;color:{{ p.color }};"><i class="fa-solid fa-diagram-project"></i></span>
+                        <div><a href="{{ p.get_absolute_url }}" class="fw-semibold d-block">{{ p.name }}</a><span class="text-secondary-2 small">{{ p.code }}</span></div>
+                    </div>
+                    {{ p.status|status_badge }}
+                </div>
+                <p class="text-secondary-2 small mb-2 text-truncate">{{ p.description|default:"No description" }}</p>
+                <div class="d-flex justify-content-between small mb-1"><span>Progress</span><span>{{ p.progress }}%</span></div>
+                <div class="progress mb-2"><div class="progress-bar bg-{{ p.health }}" style="width:{{ p.progress }}%;"></div></div>
+                <div class="d-flex justify-content-between small text-secondary-2">
+                    <span><i class="fa-solid fa-list-check me-1"></i>{{ p.num_tasks }} tasks</span>
+                    {% if p.due_date %}<span class="{% if p.is_overdue %}text-danger{% endif %}"><i class="fa-solid fa-calendar me-1"></i>{{ p.due_date|date:"M d" }}</span>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-secondary-2"><i class="fa-solid fa-diagram-project fa-2x mb-3 d-block"></i>No projects found.</div>
+    {% endfor %}
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

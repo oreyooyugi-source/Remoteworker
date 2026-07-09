@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Announcements{% endblock %}
+{% block page_actions %}
+<a href="{% url 'notifications:announcement_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-bullhorn me-1"></i>New Announcement</a>
+{% endblock %}
+{% block content %}
+{% for a in announcements %}
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <h5 class="mb-1">{% if a.pinned %}<i class="fa-solid fa-thumbtack text-warning me-1"></i>{% endif %}{{ a.title }}</h5>
+            <span class="badge text-bg-{{ a.priority|status_color }}">{{ a.get_priority_display }}</span>
+        </div>
+        <p class="text-secondary-2 small mb-2">{{ a.author.get_full_name }} · {{ a.published_at|date:"M d, Y" }}{% if a.department %} · {{ a.department.name }}{% endif %}</p>
+        <p class="mb-0">{{ a.body|linebreaksbr }}</p>
+    </div>
+</div>
+{% empty %}
+<div class="text-center py-5 text-secondary-2"><i class="fa-solid fa-bullhorn fa-2x mb-3 d-block"></i>No announcements yet.</div>
+{% endfor %}
+{% endblock %}

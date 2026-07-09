@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Timesheet{% endblock %}
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <h5 class="mb-1">{{ timesheet.employee.full_name }}</h5>
+            <span class="text-secondary-2">{{ timesheet.start_date|date:"M d, Y" }} – {{ timesheet.end_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="text-center"><div class="fw-bold fs-4">{{ timesheet.total_hours }}h</div><small class="text-secondary-2">Total</small></div>
+        <div class="text-center"><div class="fw-bold fs-4">{{ timesheet.billable_hours }}h</div><small class="text-secondary-2">Billable</small></div>
+        <div>{{ timesheet.status|status_badge }}</div>
+        <div class="d-flex gap-2">
+            {% if timesheet.status == 'pending' and can_approve %}
+            <form method="post" action="{% url 'timetracking:timesheet_decision' timesheet.pk %}">
+                {% csrf_token %}
+                <button name="decision" value="approve" class="btn btn-success btn-sm"><i class="fa-solid fa-check me-1"></i>Approve</button>
+                <button name="decision" value="reject" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-xmark me-1"></i>Reject</button>
+            </form>
+            {% endif %}
+            <form method="post" action="{% url 'timetracking:timesheet_submit' timesheet.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-paper-plane me-1"></i>Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-list me-2"></i>Entries</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Description</th><th>Project</th><th>Date</th><th>Duration</th><th>Billable</th></tr></thead>
+            <tbody>
+                {% for e in entries %}
+                <tr>
+                    <td>{{ e.description|default:"—" }}</td>
+                    <td>{{ e.project.name|default:"—" }}</td>
+                    <td>{{ e.start_time|date:"M d" }}</td>
+                    <td>{{ e.duration_hours }}h</td>
+                    <td>{% if e.is_billable %}<i class="fa-solid fa-check text-success"></i>{% else %}—{% endif %}</td>
+                </tr>
+                {% empty %}<tr><td colspan="5" class="text-center text-secondary-2 py-3">No entries</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

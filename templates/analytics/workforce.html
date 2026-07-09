@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Workforce Analytics{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-primary"><i class="fa-solid fa-users"></i></div><div><div class="stat-value">{{ kpis.headcount }}</div><div class="stat-label">Headcount</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-success"><i class="fa-solid fa-user-check"></i></div><div><div class="stat-value">{{ kpis.active }}</div><div class="stat-label">Active</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-info"><i class="fa-solid fa-circle-dot"></i></div><div><div class="stat-value">{{ kpis.online }}</div><div class="stat-label">Online</div></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="stat-icon bg-soft-warning"><i class="fa-solid fa-gauge"></i></div><div><div class="stat-value">{{ kpis.utilization }}%</div><div class="stat-label">Utilization</div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-8"><div class="card"><div class="card-header"><i class="fa-solid fa-chart-area me-2"></i>Attendance Trend</div><div class="card-body"><div style="height:300px;"><canvas id="attendanceChart"></canvas></div></div></div></div>
+    <div class="col-lg-4"><div class="card"><div class="card-header"><i class="fa-solid fa-chart-pie me-2"></i>Headcount by Department</div><div class="card-body"><div style="height:300px;"><canvas id="headcountChart"></canvas></div></div></div></div>
+</div>
+{{ charts_json|json_script:"analytics-charts" }}
+{% endblock %}

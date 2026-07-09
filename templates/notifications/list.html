@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Notifications{% endblock %}
+{% block page_actions %}
+<a href="{% url 'notifications:preferences' %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-sliders me-1"></i>Preferences</a>
+<form method="post" action="{% url 'notifications:mark_all_read' %}" class="d-inline">{% csrf_token %}<button class="btn btn-primary btn-sm"><i class="fa-solid fa-check-double me-1"></i>Mark all read</button></form>
+{% endblock %}
+{% block content %}
+<div class="btn-group mb-3">
+    <a href="?" class="btn btn-sm {% if not unread_only %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+    <a href="?filter=unread" class="btn btn-sm {% if unread_only %}btn-primary{% else %}btn-outline-primary{% endif %}">Unread ({{ unread_total }})</a>
+</div>
+<div class="card">
+    <div class="list-group list-group-flush">
+        {% for note in notifications %}
+        <a href="{% if note.url %}{% url 'notifications:mark_read' note.pk %}{% else %}#{% endif %}" class="list-group-item list-group-item-action d-flex gap-3 {% if not note.is_read %}bg-soft-primary{% endif %}">
+            <span class="stat-icon bg-soft-{{ note.color }}" style="width:40px;height:40px;"><i class="fa-solid {{ note.icon }}"></i></span>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ note.title }}</strong>
+                    <small class="text-secondary-2">{{ note.created_at|timesince }} ago</small>
+                </div>
+                <div class="text-secondary-2 small">{{ note.message }}</div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-5 text-secondary-2"><i class="fa-regular fa-bell fa-2x mb-3 d-block"></i>You're all caught up!</div>
+        {% endfor %}
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

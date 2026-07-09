@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}{{ employee.full_name }}{% endblock %}
+{% block page_actions %}
+{% if can_manage %}<a href="{% url 'employees:edit' employee.pk %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen me-1"></i>Edit</a>{% endif %}
+<a href="{% url 'employees:documents' employee.pk %}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-folder me-1"></i>Documents</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card text-center mb-3">
+            <div class="card-body">
+                <div class="position-relative d-inline-block mb-2">
+                    {% if employee.avatar_url %}<img src="{{ employee.avatar_url }}" class="avatar avatar-xl" alt="">{% else %}<span class="avatar avatar-xl">{{ employee.initials }}</span>{% endif %}
+                    <span class="presence-dot presence-{{ employee.online_status }} position-absolute bottom-0 end-0" style="width:16px;height:16px;"></span>
+                </div>
+                <h4 class="mb-0">{{ employee.full_name }}</h4>
+                <p class="text-secondary-2 mb-2">{{ employee.job_title.name|default:"—" }}</p>
+                {{ employee.status|status_badge }}
+                <div class="row text-center mt-3 g-2">
+                    <div class="col-4"><div class="fw-bold">{{ employee.tenure_display }}</div><small class="text-secondary-2">Tenure</small></div>
+                    <div class="col-4"><div class="fw-bold">{{ employee.direct_reports.count }}</div><small class="text-secondary-2">Reports</small></div>
+                    <div class="col-4"><div class="fw-bold">{{ employee.age|default:"—" }}</div><small class="text-secondary-2">Age</small></div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-address-card me-2"></i>Contact</div>
+            <div class="card-body small">
+                <p class="mb-2"><i class="fa-solid fa-envelope me-2 text-secondary-2"></i>{{ employee.email }}</p>
+                <p class="mb-2"><i class="fa-solid fa-phone me-2 text-secondary-2"></i>{{ employee.phone|default:"—" }}</p>
+                <p class="mb-0"><i class="fa-solid fa-location-dot me-2 text-secondary-2"></i>{{ employee.city|default:"" }} {{ employee.country }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-briefcase me-2"></i>Employment</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Employee Code</small>{{ employee.employee_code }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Department</small>{{ employee.department.name|default:"—" }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Team</small>{{ employee.team.name|default:"—" }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Employment Type</small>{{ employee.get_employment_type_display }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Hire Date</small>{{ employee.hire_date|date:"M d, Y" }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Reports To</small>{{ employee.reports_to.full_name|default:"—" }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Branch</small>{{ employee.branch.name|default:"—" }}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Remote</small>{% if employee.is_remote %}Yes{% else %}No{% endif %}</div>
+                    <div class="col-md-4"><small class="text-secondary-2 d-block">Weekly Hours</small>{{ employee.weekly_hours }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header"><i class="fa-solid fa-laptop me-2"></i>Devices</div>
+                    <ul class="list-group list-group-flush">
+                        {% for d in devices %}<li class="list-group-item d-flex justify-content-between"><span>{{ d.name }}</span><span class="text-secondary-2 small">{{ d.get_device_type_display }}</span></li>{% empty %}<li class="list-group-item text-secondary-2 small">No devices</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header"><i class="fa-solid fa-certificate me-2"></i>Certifications</div>
+                    <ul class="list-group list-group-flush">
+                        {% for c in certifications %}<li class="list-group-item"><span class="d-block">{{ c.name }}</span><small class="text-secondary-2">{{ c.issuing_organization }}</small></li>{% empty %}<li class="list-group-item text-secondary-2 small">None</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

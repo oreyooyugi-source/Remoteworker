@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-file-export me-2"></i>Generate Report</div>
+            <div class="card-body">
+                <form method="post" action="{% url 'reports:generate' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Report type</label>
+                        <select name="report_type" class="form-select">
+                            {% for value, label in report_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Format</label>
+                        <select name="export_format" class="form-select">
+                            {% for value, label in formats %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col"><label class="form-label small">From</label><input type="date" name="start" class="form-control"></div>
+                        <div class="col"><label class="form-label small">To</label><input type="date" name="end" class="form-control"></div>
+                    </div>
+                    <button class="btn btn-primary w-100"><i class="fa-solid fa-download me-2"></i>Generate & Download</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><i class="fa-solid fa-clock-rotate-left me-2"></i>Report History</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Report</th><th>Format</th><th>Rows</th><th>By</th><th>When</th></tr></thead>
+                    <tbody>
+                        {% for r in reports %}
+                        <tr>
+                            <td><i class="fa-solid {{ r.icon }} me-2 text-secondary-2"></i>{{ r.name }}</td>
+                            <td>{{ r.get_export_format_display }}</td>
+                            <td>{{ r.row_count }}</td>
+                            <td class="small">{{ r.generated_by.get_full_name|default:"—" }}</td>
+                            <td class="small">{{ r.created_at|date:"M d, H:i" }}</td>
+                        </tr>
+                        {% empty %}<tr><td colspan="5" class="text-center text-secondary-2 py-4">No reports generated yet.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

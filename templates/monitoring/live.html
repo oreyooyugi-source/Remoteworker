@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block title %}Live Monitoring{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md"><div class="card stat-card"><div class="stat-icon bg-soft-success"><i class="fa-solid fa-circle-dot"></i></div><div><div class="stat-value" data-count="working">{{ counts.working }}</div><div class="stat-label">Working</div></div></div></div>
+    <div class="col-6 col-md"><div class="card stat-card"><div class="stat-icon bg-soft-warning"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="stat-value" data-count="idle">{{ counts.idle }}</div><div class="stat-label">Idle</div></div></div></div>
+    <div class="col-6 col-md"><div class="card stat-card"><div class="stat-icon bg-soft-warning"><i class="fa-solid fa-mug-hot"></i></div><div><div class="stat-value" data-count="break">{{ counts.break }}</div><div class="stat-label">On Break</div></div></div></div>
+    <div class="col-6 col-md"><div class="card stat-card"><div class="stat-icon bg-soft-info"><i class="fa-solid fa-video"></i></div><div><div class="stat-value" data-count="meeting">{{ counts.meeting }}</div><div class="stat-label">Meeting</div></div></div></div>
+    <div class="col-6 col-md"><div class="card stat-card"><div class="stat-icon bg-soft-secondary"><i class="fa-solid fa-power-off"></i></div><div><div class="stat-value" data-count="offline">{{ counts.offline }}</div><div class="stat-label">Offline</div></div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-users me-2 text-success"></i>Currently Working</span>
+                <span class="badge text-bg-success">Live</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    {% for e in overview.working %}
+                    <div class="col-md-6">
+                        <a href="{% url 'monitoring:employee' e.pk %}" class="d-flex align-items-center gap-2 p-2 rounded border" style="border-color: var(--border-color)!important;">
+                            <div class="position-relative">
+                                {% if e.avatar_url %}<img src="{{ e.avatar_url }}" class="avatar avatar-sm" alt="">{% else %}<span class="avatar avatar-sm">{{ e.initials }}</span>{% endif %}
+                                <span class="presence-dot presence-working position-absolute bottom-0 end-0"></span>
+                            </div>
+                            <div class="min-w-0"><span class="fw-semibold d-block small text-truncate">{{ e.full_name }}</span><span class="text-secondary-2" style="font-size:.72rem;">{{ e.current_activity|default:e.job_title.name|default:"Working" }}</span></div>
+                        </a>
+                    </div>
+                    {% empty %}<div class="col-12 text-center text-secondary-2 py-4">No one is currently working.</div>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fa-solid fa-hourglass me-2 text-warning"></i>Idle / Break</div>
+            <ul class="list-group list-group-flush">
+                {% for e in overview.idle %}<li class="list-group-item d-flex align-items-center gap-2"><span class="presence-dot presence-idle"></span>{{ e.full_name }}</li>{% endfor %}
+                {% for e in overview.on_break %}<li class="list-group-item d-flex align-items-center gap-2"><span class="presence-dot presence-break"></span>{{ e.full_name }} <span class="badge text-bg-warning ms-auto">Break</span></li>{% endfor %}
+                {% if not overview.idle and not overview.on_break %}<li class="list-group-item text-secondary-2 small">Nobody idle</li>{% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var url = "{% url 'monitoring:live_data' %}";
+    setInterval(function () {
+        fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+            Object.keys(data.counts).forEach(function (key) {
+                var el = document.querySelector('[data-count="' + key + '"]');
+                if (el) el.textContent = data.counts[key];
+            });
+        }).catch(function () {});
+    }, 15000);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header"><i class="fa-solid fa-trophy me-2 text-warning"></i>Productivity Leaderboard — last {{ period_days }} days</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Rank</th><th>Employee</th><th>Avg Score</th><th>Active Hours</th></tr></thead>
+            <tbody>
+                {% for row in leaders %}
+                <tr>
+                    <td>
+                        {% if forloop.counter == 1 %}<i class="fa-solid fa-medal text-warning"></i>
+                        {% elif forloop.counter == 2 %}<i class="fa-solid fa-medal text-secondary"></i>
+                        {% elif forloop.counter == 3 %}<i class="fa-solid fa-medal" style="color:#cd7f32;"></i>
+                        {% else %}{{ forloop.counter }}{% endif %}
+                    </td>
+                    <td class="d-flex align-items-center gap-2">
+                        {% if row.employee.avatar_url %}<img src="{{ row.employee.avatar_url }}" class="avatar avatar-sm" alt="">{% else %}<span class="avatar avatar-sm">{{ row.employee.initials }}</span>{% endif %}
+                        {{ row.employee.full_name }}
+                    </td>
+                    <td><div class="progress" style="height:18px;"><div class="progress-bar bg-primary" style="width:{{ row.avg_score }}%;">{{ row.avg_score }}%</div></div></td>
+                    <td>{{ row.active_hours }}h</td>
+                </tr>
+                {% empty %}<tr><td colspan="4" class="text-center text-secondary-2 py-4">No data yet.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
